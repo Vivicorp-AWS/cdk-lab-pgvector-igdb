@@ -8,7 +8,8 @@ from aws_cdk import (
     aws_secretsmanager as secretsmanager,
     Duration,
     aws_logs as logs,
-    RemovalPolicy, 
+    RemovalPolicy,
+    CfnOutput,
 )
 
 from constructs import Construct
@@ -31,11 +32,6 @@ class RDSStack(NestedStack):
 
         # PostgreSQL for RDS Database Instance
         self.db = rds.DatabaseInstance(self, "PostgreSQL",
-            credentials=rds.Credentials.from_username(
-                username=db_params["username"],
-                password=SecretValue.unsafe_plain_text(db_params["password"])
-            ),
-            # credentials=rds.Credentials.from_secret(db_secret),
             database_name=db_name,
             instance_identifier=db_params["identifier"],
             engine=rds.DatabaseInstanceEngine.postgres(version=engine_version),
@@ -51,6 +47,12 @@ class RDSStack(NestedStack):
         )
 
         secretsmanager.SecretTargetAttachment(self, "MySecretTargetAttachment",
-            secret=db_secret,
+            secret=self.db.secret,
             target=self.db
         )
+
+        # Outputs
+        CfnOutput(self, "DatabaseInstanceIdentifier", value=self.db.instance_identifier,)
+        CfnOutput(self, "DatabaseInstanceARN", value=self.db.instance_arn,)
+        CfnOutput(self, "DatabaseSecretName", value=self.db.secret.secret_name,)
+        CfnOutput(self, "DatabaseSecretARN", value=self.db.secret.secret_arn,)
