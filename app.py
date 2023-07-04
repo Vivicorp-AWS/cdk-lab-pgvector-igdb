@@ -8,36 +8,6 @@ from stacks.vpc_stack import VPCStack
 from stacks.iam_stack import IAMStack
 from stacks.rds_stack import RDSStack
 
-load_dotenv()
-
-# Set the default database name
-if os.getenv("DB_IDENTIFIER"):
-    DB_IDENTIFIER = os.getenv("DB_IDENTIFIER")
-else:
-    print("Please specify DB_IDENTIFIER in .env file")
-    sys.exit(1)
-
-# Set the default database username
-if os.getenv("DB_USERNAME"):
-    DB_USERNAME = os.getenv("DB_USERNAME")
-else:
-    print("Please specify DB_USERNAME in .env file")
-    sys.exit(1)
-
-# Set the default database password
-if os.getenv("DB_PASSWORD"):
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-else:
-    print("Please specify DB_PASSWORD in .env file")
-    sys.exit(1)
-
-# Aggregrate database related parameters
-db_params = {
-    "username": DB_USERNAME,
-    "password": DB_PASSWORD,
-    "identifier": DB_IDENTIFIER,
-}
-
 app = cdk.App()
 
 PREFIX = app.node.try_get_context("prefix")
@@ -69,8 +39,5 @@ iam_stack = IAMStack(
     db_identifier=db_identifier,
     db_secret_arn=db_secret_arn,
 )
-
-
-
 
 app.synth()
