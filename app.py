@@ -51,23 +51,23 @@ vpc_stack = VPCStack(
     top_stack, f"vpcstack",
     description="CDK Lab pgvector IGDB VPC Stack",
 )
-
 sg_rds = vpc_stack.sg_rds
 
 rds_stack = RDSStack(
     top_stack, f"rdsstack",
     description="CDK Lab pgvector IGDB RDS Stack",
     vpc=vpc_stack.vpc,
-    db_params=db_params,
     security_groups=[sg_rds],
 )
 db_secret = rds_stack.db.secret
+db_secret_arn = rds_stack.db.secret.secret_arn
+db_identifier = rds_stack.db.instance_identifier
 
 iam_stack = IAMStack(
     top_stack, f"iamstack",
     description="CDK Lab pgvector IGDB IAM Stack",
-    db_params=db_params,
-    db_secret=db_secret,
+    db_identifier=db_identifier,
+    db_secret_arn=db_secret_arn,
 )
 
 

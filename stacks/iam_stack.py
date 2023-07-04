@@ -11,7 +11,7 @@ import json
 from constructs import Construct
 
 class IAMStack(NestedStack):
-    def __init__(self, scope: Construct, id: str, db_params, db_secret, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, db_identifier, db_secret_arn, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self.sagemaker_role = iam.Role(self, "SageMakerExecutionRole",
@@ -29,7 +29,7 @@ class IAMStack(NestedStack):
                 "secretsmanager:GetSecretValue",
                 "secretsmanager:DescribeSecret",
                 "secretsmanager:ListSecretVersionIds",],
-            resources=[db_secret.secret_arn]
+            resources=[db_secret_arn]
             ),
             iam.PolicyStatement(
             actions=[
@@ -45,7 +45,7 @@ class IAMStack(NestedStack):
             actions=[
                 "rds:DescribeDBInstances",
             ],
-            resources=[f"arn:aws:rds:*:546614691476:db:{db_params['identifier']}"],
+            resources=[f"arn:aws:rds:*:546614691476:db:{db_identifier}"],
             )],
         ))
 

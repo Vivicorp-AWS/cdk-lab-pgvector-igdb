@@ -19,9 +19,6 @@ class RDSStack(NestedStack):
         self, scope:Construct,
         id:str,
         vpc,
-        db_params=None,
-        db_name:str="postgres",  # Default Database name: "postgres". Can't use PostgreSQL's reserved name "db" as database name
-        db_secret=None,
         security_groups=None,
         instance_type:ec2.InstanceType=ec2.InstanceType.of(
             ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),  # Default instance type: db.t4g.micro
@@ -32,8 +29,6 @@ class RDSStack(NestedStack):
 
         # PostgreSQL for RDS Database Instance
         self.db = rds.DatabaseInstance(self, "PostgreSQL",
-            database_name=db_name,
-            instance_identifier=db_params["identifier"],
             engine=rds.DatabaseInstanceEngine.postgres(version=engine_version),
             instance_type=instance_type,
             backup_retention=Duration.days(0),
