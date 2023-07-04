@@ -13,7 +13,7 @@ app = cdk.App()
 PREFIX = app.node.try_get_context("prefix")
 
 top_stack = TopStack(
-    app, f"{PREFIX}-pgvector-igdb-topstack",
+    app, f"{PREFIX}-pgvector-igdb-stack",
     description="CDK Lab pgvector IGDB Top Stack",
 )
 
