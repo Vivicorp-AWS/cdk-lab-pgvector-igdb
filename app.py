@@ -1,28 +1,71 @@
 #!/usr/bin/env python3
+from dotenv import load_dotenv
 import os
-
+import sys
 import aws_cdk as cdk
+from stacks.top_stack import TopStack
+from stacks.vpc_stack import VPCStack
+from stacks.iam_stack import IAMStack
+from stacks.rds_stack import RDSStack
 
-from cdk_lab_pgvector_igdb.cdk_lab_pgvector_igdb_stack import CdkLabPgvectorIgdbStack
+load_dotenv()
 
+# Set the default database name
+if os.getenv("DB_IDENTIFIER"):
+    DB_IDENTIFIER = os.getenv("DB_IDENTIFIER")
+else:
+    print("Please specify DB_IDENTIFIER in .env file")
+    sys.exit(1)
+
+# Set the default database username
+if os.getenv("DB_USERNAME"):
+    DB_USERNAME = os.getenv("DB_USERNAME")
+else:
+    print("Please specify DB_USERNAME in .env file")
+    sys.exit(1)
+
+# Set the default database password
+if os.getenv("DB_PASSWORD"):
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+else:
+    print("Please specify DB_PASSWORD in .env file")
+    sys.exit(1)
+
+# Aggregrate database related parameters
+db_params = {
+    "username": DB_USERNAME,
+    "password": DB_PASSWORD,
+    "identifier": DB_IDENTIFIER,
+}
 
 app = cdk.App()
-CdkLabPgvectorIgdbStack(app, "CdkLabPgvectorIgdbStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
+PREFIX = app.node.try_get_context("prefix")
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+top_stack = TopStack(
+    app, f"{PREFIX}-pgvector-igdb-topstack",
+    description="CDK Lab pgvector IGDB Top Stack",
+)
 
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
+vpc_stack = VPCStack(
+    top_stack, f"vpcstack",
+    description="CDK Lab pgvector IGDB VPC Stack",
+)
 
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
+iam_stack = IAMStack(
+    top_stack, f"iamstack",
+    description="CDK Lab pgvector IGDB IAM Stack",
+    db_params=db_params,
+)
+db_secret = iam_stack.db_secret
 
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
+rds_stack = RDSStack(
+    top_stack, f"rdsstack",
+    description="CDK Lab pgvector IGDB RDS Stack",
+    vpc=vpc_stack.vpc,
+    db_params=db_params,
+    # db_secret=db_secret,
+)
+
 
 app.synth()
