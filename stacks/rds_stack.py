@@ -41,6 +41,7 @@ class RDSStack(NestedStack):
             deletion_protection=False
         )
 
+        # Link a Secrets Manager secret to the RDS instance
         secretsmanager.SecretTargetAttachment(self, "MySecretTargetAttachment",
             secret=self.db.secret,
             target=self.db
