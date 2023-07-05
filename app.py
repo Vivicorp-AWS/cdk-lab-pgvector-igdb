@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import os
-import sys
 import aws_cdk as cdk
 from stacks.top_stack import TopStack
 from stacks.vpc_stack import VPCStack
