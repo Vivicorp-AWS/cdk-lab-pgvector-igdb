@@ -11,16 +11,25 @@ import json
 from constructs import Construct
 
 class IAMStack(NestedStack):
-    def __init__(self, scope: Construct, id: str, db_identifier, db_secret_arn, **kwargs) -> None:
+    def __init__(
+            self,
+            scope: Construct,
+            id: str,
+            db_identifier,
+            db_secret_arn,
+            parameter_db_secret_arn,
+            **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
+        # SageMaker Execution Role
         self.sagemaker_role = iam.Role(self, "SageMakerExecutionRole",
             assumed_by=iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="SageMaker Execution Role",
         )
+        # Add "AmazonSageMakerFullAccess" and "SecretsManagerReadWrite" managed policies to SageMaker Execution Role
         self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess"))
         self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
-
+        # Attach inline policy to SageMaker Execution Role to read DB secret
         self.sagemaker_role.attach_inline_policy(iam.Policy(self, "ReadDBSecretPolicy",
                                                           statements=[
             iam.PolicyStatement(
@@ -38,7 +47,7 @@ class IAMStack(NestedStack):
             resources=["*"]
             )]
         ))
-
+        # Attach inline policy to SageMaker Execution Role to describe DB instance
         self.sagemaker_role.attach_inline_policy(iam.Policy(self, "DescribeDBInstancesPolicy",
                                                           statements=[
             iam.PolicyStatement(
@@ -48,6 +57,8 @@ class IAMStack(NestedStack):
             resources=[f"arn:aws:rds:*:546614691476:db:{db_identifier}"],
             )],
         ))
+        # Grant SageMaker Execution Role read access to Parameter Store secret
+        parameter_db_secret_arn.grant_read(self.sagemaker_role)
 
         self.sagemaker_role.apply_removal_policy(RemovalPolicy.DESTROY)
 

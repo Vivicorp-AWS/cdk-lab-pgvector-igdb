@@ -25,16 +25,19 @@ rds_stack = RDSStack(
     description="CDK Lab pgvector IGDB RDS Stack",
     vpc=vpc_stack.vpc,
     security_groups=[sg_rds],
+    prefix=PREFIX,
 )
 db_secret = rds_stack.db.secret
 db_secret_arn = rds_stack.db.secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
+parameter_db_secret_arn = rds_stack.parameter_db_secret_arn
 
 iam_stack = IAMStack(
     top_stack, f"iamstack",
     description="CDK Lab pgvector IGDB IAM Stack",
     db_identifier=db_identifier,
     db_secret_arn=db_secret_arn,
+    parameter_db_secret_arn=parameter_db_secret_arn,
 )
 
 app.synth()

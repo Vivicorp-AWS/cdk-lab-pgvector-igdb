@@ -4,8 +4,8 @@ from aws_cdk import (
     NestedStack,
     aws_ec2 as ec2,
     aws_rds as rds,
-    SecretValue,
     aws_secretsmanager as secretsmanager,
+    aws_ssm as ssm,
     Duration,
     aws_logs as logs,
     RemovalPolicy,
@@ -19,6 +19,7 @@ class RDSStack(NestedStack):
         self, scope:Construct,
         id:str,
         vpc,
+        prefix: str,
         security_groups=None,
         instance_type:ec2.InstanceType=ec2.InstanceType.of(
             ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),  # Default instance type: db.t4g.micro
@@ -47,8 +48,12 @@ class RDSStack(NestedStack):
             target=self.db
         )
 
+        self.parameter_db_secret_arn = ssm.StringParameter(self, "DBSecretARN", parameter_name=f"/{prefix}/DBSecretARN" ,string_value=self.db.secret.secret_arn)
+
         # Outputs
         CfnOutput(self, "DatabaseInstanceIdentifier", value=self.db.instance_identifier,)
         CfnOutput(self, "DatabaseInstanceARN", value=self.db.instance_arn,)
         CfnOutput(self, "DatabaseSecretName", value=self.db.secret.secret_name,)
         CfnOutput(self, "DatabaseSecretARN", value=self.db.secret.secret_arn,)
+        CfnOutput(self, "SSMParameterDBSecretName", value=self.parameter_db_secret_arn.parameter_name,)
+        CfnOutput(self, "SSMParameterDBSecretARN", value=self.parameter_db_secret_arn.parameter_arn,)
