@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from dotenv import load_dotenv
 import os
 import sys
 import aws_cdk as cdk
