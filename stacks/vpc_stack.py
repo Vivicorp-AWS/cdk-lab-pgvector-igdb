@@ -30,7 +30,7 @@ class VPCStack(NestedStack):
                 ],
             )
         
-        # Security group for EC2
+        # Security group for SageMaker Notebook
         self.sg_sagemaker_notebook = ec2.SecurityGroup(
             self, "SageMakerNotebookSecurityGroup",
             vpc=self.vpc,
