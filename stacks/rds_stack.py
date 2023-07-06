@@ -33,6 +33,7 @@ class RDSStack(NestedStack):
             engine=rds.DatabaseInstanceEngine.postgres(version=engine_version),
             instance_type=instance_type,
             backup_retention=Duration.days(0),
+            auto_minor_version_upgrade=False,
             cloudwatch_logs_retention=logs.RetentionDays.ONE_MONTH,
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_group_name="Private"),
