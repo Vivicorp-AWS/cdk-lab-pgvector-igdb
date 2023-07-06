@@ -4,6 +4,7 @@ from stacks.top_stack import TopStack
 from stacks.vpc_stack import VPCStack
 from stacks.iam_stack import IAMStack
 from stacks.rds_stack import RDSStack
+from stacks.sagemaker_stack import SageMakerStack
 
 app = cdk.App()
 
@@ -19,6 +20,8 @@ vpc_stack = VPCStack(
     description="CDK Lab pgvector IGDB VPC Stack",
 )
 sg_rds = vpc_stack.sg_rds
+sg_sagemaker_notebook_id = vpc_stack.sg_sagemaker_notebook.security_group_id
+public_subnet_id = vpc_stack.vpc.public_subnets[0].subnet_id
 
 rds_stack = RDSStack(
     top_stack, f"rdsstack",
@@ -38,6 +41,15 @@ iam_stack = IAMStack(
     db_identifier=db_identifier,
     db_secret_arn=db_secret_arn,
     parameter_db_secret_arn=parameter_db_secret_arn,
+)
+sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
+
+sagemaker_stack = SageMakerStack(
+    top_stack, f"sagemakerstack",
+    description="CDK Lab pgvector IGDB SageMaker Stack",
+    role_arn=sagemaker_role_arn,
+    security_group_ids=[sg_sagemaker_notebook_id],
+    subnet_id=public_subnet_id,
 )
 
 app.synth()
