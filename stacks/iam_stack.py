@@ -28,7 +28,7 @@ class IAMStack(NestedStack):
         )
         # Add "AmazonSageMakerFullAccess" and "SecretsManagerReadWrite" managed policies to SageMaker Execution Role
         self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess"))
-        self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
+        self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))  # [TODO] Maybe too strong
         # Attach inline policy to SageMaker Execution Role to read DB secret
         self.sagemaker_role.attach_inline_policy(iam.Policy(self, "ReadDBSecretPolicy",
                                                           statements=[
