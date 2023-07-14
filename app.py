@@ -66,21 +66,19 @@ lambda_stack = LambdaStack(
 # )
 # sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
 
-sagemaker_stack = SageMakerNotebookStack(
+sagemaker_notebook_stack = SageMakerNotebookStack(
     top_stack, f"sagemakerstack",
     description="CDK Lab pgvector IGDB SageMaker Stack",
     db_secret=db_secret,
-    parameter_db_secret_arn=parameter_dbsecretarn,
+    parameter_dbsecretarn=parameter_dbsecretarn,
     security_group_ids=[sg_allow_database_connection_id],
     subnet_id=public_subnet_id,
 )
 
 # Define dependencies
 rds_stack.add_dependency(vpc_stack)
-rds_and_s3_group = DependencyGroup()
-rds_and_s3_group.add(rds_stack)
-rds_and_s3_group.add(s3_stack)
-lambda_stack.add_dependency(rds_and_s3_group)
-sagemaker_stack.add_dependency(rds_and_s3_group)
+lambda_stack.add_dependency(rds_stack)
+lambda_stack.add_dependency(s3_stack)
+sagemaker_notebook_stack.add_dependency(rds_stack)
 
 app.synth()
