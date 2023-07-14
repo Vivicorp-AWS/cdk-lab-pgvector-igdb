@@ -2,8 +2,9 @@
 import aws_cdk as cdk
 from stacks.top_stack import TopStack
 from stacks.vpc_stack import VPCStack
-from stacks.iam_stack import IAMStack
 from stacks.rds_stack import RDSStack
+from stacks.s3_stack import S3Stack
+from stacks.iam_stack import IAMStack
 from stacks.sagemaker_stack import SageMakerNotebookStack
 
 app = cdk.App()
@@ -16,7 +17,7 @@ top_stack = TopStack(
 )
 
 vpc_stack = VPCStack(
-    top_stack, f"vpcstack",
+    top_stack, f"vpcs-tack",
     description="CDK Lab pgvector IGDB VPC Stack",
 )
 sg_rds = vpc_stack.sg_rds
@@ -26,7 +27,7 @@ public_subnets = vpc_stack.vpc.public_subnets
 public_subnet_id = public_subnets[0].subnet_id
 
 rds_stack = RDSStack(
-    top_stack, f"rdsstack",
+    top_stack, f"rds-stack",
     description="CDK Lab pgvector IGDB RDS Stack",
     vpc=vpc_stack.vpc,
     security_groups=[sg_rds],
@@ -36,6 +37,12 @@ db_secret = rds_stack.db.secret
 db_secret_arn = rds_stack.db.secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
 parameter_db_secret_arn = rds_stack.parameter_db_secret_arn
+
+s3_stack = S3Stack(
+    top_stack, f"s3-stack",
+    description="CDK Lab pgvector IGDB S3 Stack",
+)
+bucket = s3_stack.bucket
 
 # [NOTE] Combine IAMStack into SageMakerStack?
 iam_stack = IAMStack(
