@@ -22,6 +22,7 @@ vpc_stack = VPCStack(
     top_stack, f"vpcs-tack",
     description="CDK Lab pgvector IGDB VPC Stack",
 )
+vpc = vpc_stack.vpc
 sg_rds = vpc_stack.sg_rds
 sg_allow_database_connection = vpc_stack.sg_allow_database_connection
 sg_allow_database_connection_id = sg_allow_database_connection.security_group_id
@@ -36,7 +37,7 @@ rds_stack = RDSStack(
     prefix=PREFIX,
 )
 db_secret = rds_stack.db.secret
-db_secret_arn = rds_stack.db.secret.secret_arn
+db_secret_arn = db_secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
 parameter_db_secret_arn = rds_stack.parameter_db_secret_arn
 
@@ -50,8 +51,9 @@ bucket_name = bucket.bucket_name
 lambda_stack = LambdaStack(
     top_stack, f"lambda-stack",
     description="CDK Lab pgvector IGDB Lambda Stack",
-    db_secret_arn=db_secret_arn,
+    db_secret=db_secret,
     bucket=bucket,
+    vpc=vpc,
 )
 
 # [NOTE] Combine IAMStack into SageMakerStack?
@@ -77,5 +79,6 @@ rds_stack.add_dependency(vpc_stack)
 rds_and_s3_group = DependencyGroup()
 rds_and_s3_group.add(rds_stack)
 rds_and_s3_group.add(s3_stack)
+lambda_stack.add_dependency(rds_and_s3_group)
 
 app.synth()

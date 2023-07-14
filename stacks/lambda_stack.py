@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_s3_deployment as s3deploy,
     RemovalPolicy,
     aws_lambda as lambda_,
+    aws_ec2 as ec2,
     aws_logs as logs,
     Duration,
     triggers,
@@ -14,7 +15,7 @@ import os
 
 class LambdaStack(Stack):
 
-    def __init__(self, scope: Construct, id: str, db_secret_arn:str, bucket, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, db_secret, bucket, vpc, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         layer = lambda_.LayerVersion(
@@ -33,14 +34,18 @@ class LambdaStack(Stack):
             architecture=lambda_.Architecture.X86_64,
             handler="index.handler",
             environment={
-                "DB_SECRET_ARN": db_secret_arn,
+                "DB_SECRET_ARN": db_secret.secret_arn,
                 "BUCKET_NAME": bucket.bucket_name,
                 },
+                vpc=vpc,
+                vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE),
             runtime=lambda_.Runtime.PYTHON_3_10,
+            layers=[layer],
             log_retention=logs.RetentionDays.ONE_DAY,
             timeout=Duration.seconds(30),
             )
         bucket.grant_read(funciton.role)
+        db_secret.grant_read(funciton.role)
         
         triggers.Trigger(
             self, "DataImportLambdaFunctionTrigger",
