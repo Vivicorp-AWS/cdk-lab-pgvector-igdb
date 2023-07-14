@@ -81,5 +81,6 @@ rds_and_s3_group = DependencyGroup()
 rds_and_s3_group.add(rds_stack)
 rds_and_s3_group.add(s3_stack)
 lambda_stack.add_dependency(rds_and_s3_group)
+sagemaker_stack.add_dependency(rds_and_s3_group)
 
 app.synth()
