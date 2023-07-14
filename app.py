@@ -39,7 +39,7 @@ rds_stack = RDSStack(
 db_secret = rds_stack.db.secret
 db_secret_arn = db_secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
-parameter_db_secret_arn = rds_stack.parameter_db_secret_arn
+parameter_dbsecretarn = rds_stack.parameter_dbsecretarn
 
 s3_stack = S3Stack(
     top_stack, f"s3-stack",
@@ -56,20 +56,21 @@ lambda_stack = LambdaStack(
     vpc=vpc,
 )
 
-# [NOTE] Combine IAMStack into SageMakerStack?
-iam_stack = IAMStack(
-    top_stack, f"iamstack",
-    description="CDK Lab pgvector IGDB IAM Stack",
-    db_identifier=db_identifier,
-    db_secret_arn=db_secret_arn,
-    parameter_db_secret_arn=parameter_db_secret_arn,
-)
-sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
+# # [NOTE] Combine IAMStack into SageMakerStack?
+# iam_stack = IAMStack(
+#     top_stack, f"iamstack",
+#     description="CDK Lab pgvector IGDB IAM Stack",
+#     db_identifier=db_identifier,
+#     db_secret_arn=db_secret_arn,
+#     parameter_db_secret_arn=parameter_db_secret_arn,
+# )
+# sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
 
 sagemaker_stack = SageMakerNotebookStack(
     top_stack, f"sagemakerstack",
     description="CDK Lab pgvector IGDB SageMaker Stack",
-    role_arn=sagemaker_role_arn,
+    db_secret=db_secret,
+    parameter_db_secret_arn=parameter_dbsecretarn,
     security_group_ids=[sg_allow_database_connection_id],
     subnet_id=public_subnet_id,
 )
