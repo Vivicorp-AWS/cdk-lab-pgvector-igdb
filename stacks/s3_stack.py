@@ -1,5 +1,5 @@
 from aws_cdk import (
-    Stack,
+    NestedStack,
     aws_s3 as s3,
     RemovalPolicy,
     aws_s3_deployment as s3deploy,
@@ -9,7 +9,7 @@ from aws_cdk import (
 )
 from constructs import Construct
 
-class S3Stack(Stack):
+class S3Stack(NestedStack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)

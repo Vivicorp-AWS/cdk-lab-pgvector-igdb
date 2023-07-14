@@ -1,5 +1,5 @@
 from aws_cdk import (
-    Stack,
+    NestedStack,
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     RemovalPolicy,
@@ -13,7 +13,7 @@ from aws_cdk import (
 from constructs import Construct
 import os
 
-class LambdaStack(Stack):
+class LambdaStack(NestedStack):
 
     def __init__(self, scope: Construct, id: str, db_secret, bucket, vpc, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
@@ -31,7 +31,7 @@ class LambdaStack(Stack):
         function = lambda_.Function(
             self, "DataImportLambdaFunction",
             code=lambda_.Code.from_asset(os.path.join(os.curdir, "lambda",)),
-            architecture=lambda_.Architecture.X86_64,
+            architecture=lambda_.Architecture.ARM_64,
             handler="index.handler",
             environment={
                 "DB_SECRET_ARN": db_secret.secret_arn,
@@ -44,6 +44,7 @@ class LambdaStack(Stack):
             log_retention=logs.RetentionDays.ONE_DAY,
             timeout=Duration.seconds(30),
             )
+
         bucket.grant_read(function.role)
         db_secret.grant_read(function.role)
         
@@ -53,6 +54,6 @@ class LambdaStack(Stack):
             invocation_type=triggers.InvocationType.EVENT,  # Async Trigger
             execute_on_handler_change=True,
             )
-        
+
         CfnOutput(self, "LambdaFunctionName", value=function.function_name)
         CfnOutput(self, "LambdaFunctionArn", value=function.function_arn)
