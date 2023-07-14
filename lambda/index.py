@@ -39,7 +39,6 @@ def handler(event, context):
     s3.download_file(BUCKET_NAME, 'nintendo_switch_games_mean_pooling.json', '/tmp/nintendo_switch_games_mean_pooling.json')
 
     # Import Data Files
-    # [TODO] Try not using Pandas
     logger.info('## Importing Data Files')
     with open('/tmp/nintendo_switch_games_mean_pooling.json') as file:
         games = json.loads(file.read())
