@@ -20,8 +20,10 @@ vpc_stack = VPCStack(
     description="CDK Lab pgvector IGDB VPC Stack",
 )
 sg_rds = vpc_stack.sg_rds
-sg_sagemaker_notebook_id = vpc_stack.sg_sagemaker_notebook.security_group_id
-public_subnet_id = vpc_stack.vpc.public_subnets[0].subnet_id
+sg_allow_database_connection = vpc_stack.sg_allow_database_connection
+sg_allow_database_connection_id = sg_allow_database_connection.security_group_id
+public_subnets = vpc_stack.vpc.public_subnets
+public_subnet_id = public_subnets[0].subnet_id
 
 rds_stack = RDSStack(
     top_stack, f"rdsstack",
@@ -49,7 +51,7 @@ sagemaker_stack = SageMakerNotebookStack(
     top_stack, f"sagemakerstack",
     description="CDK Lab pgvector IGDB SageMaker Stack",
     role_arn=sagemaker_role_arn,
-    security_group_ids=[sg_sagemaker_notebook_id],
+    security_group_ids=[sg_allow_database_connection_id],
     subnet_id=public_subnet_id,
 )
 

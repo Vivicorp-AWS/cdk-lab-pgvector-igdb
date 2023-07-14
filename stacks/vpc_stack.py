@@ -31,12 +31,11 @@ class VPCStack(NestedStack):
             )
         
         # Security group for SageMaker Notebook
-        self.sg_sagemaker_notebook = ec2.SecurityGroup(
+        self.sg_allow_database_connection = ec2.SecurityGroup(
             self, "SageMakerNotebookSecurityGroup",
             vpc=self.vpc,
             allow_all_outbound=True,
         )
-
 
         # Security group for RDS for PostgreSQL instance
         self.sg_rds = ec2.SecurityGroup(
@@ -44,6 +43,6 @@ class VPCStack(NestedStack):
             vpc=self.vpc,
             allow_all_outbound=True,
         )
-        self.sg_rds.add_ingress_rule(self.sg_sagemaker_notebook, ec2.Port.tcp(5432))            
+        self.sg_rds.add_ingress_rule(self.sg_allow_database_connection, ec2.Port.tcp(5432))            
 
         CfnOutput(self, "VPCARN", value=self.vpc.vpc_arn)
