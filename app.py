@@ -4,7 +4,7 @@ from stacks.top_stack import TopStack
 from stacks.vpc_stack import VPCStack
 from stacks.iam_stack import IAMStack
 from stacks.rds_stack import RDSStack
-from stacks.sagemaker_stack import SageMakerStack
+from stacks.sagemaker_stack import SageMakerNotebookStack
 
 app = cdk.App()
 
@@ -35,6 +35,7 @@ db_secret_arn = rds_stack.db.secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
 parameter_db_secret_arn = rds_stack.parameter_db_secret_arn
 
+# [NOTE] Combine IAMStack into SageMakerStack?
 iam_stack = IAMStack(
     top_stack, f"iamstack",
     description="CDK Lab pgvector IGDB IAM Stack",
@@ -44,7 +45,7 @@ iam_stack = IAMStack(
 )
 sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
 
-sagemaker_stack = SageMakerStack(
+sagemaker_stack = SageMakerNotebookStack(
     top_stack, f"sagemakerstack",
     description="CDK Lab pgvector IGDB SageMaker Stack",
     role_arn=sagemaker_role_arn,

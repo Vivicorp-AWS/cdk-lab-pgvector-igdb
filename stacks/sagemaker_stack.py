@@ -8,7 +8,7 @@ from constructs import Construct
 # [TODO] Add a SageMaker Notebook Instance
 # [TODO] Add a Serverless Inference Endpoint
 
-class SageMakerStack(NestedStack):
+class SageMakerNotebookStack(NestedStack):
     def __init__(self, scope: Construct, id: str, role_arn:str, security_group_ids, subnet_id:str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
