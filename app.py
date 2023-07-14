@@ -6,6 +6,7 @@ from stacks.rds_stack import RDSStack
 from stacks.s3_stack import S3Stack
 from stacks.iam_stack import IAMStack
 from stacks.sagemaker_stack import SageMakerNotebookStack
+from constructs import DependencyGroup
 
 app = cdk.App()
 
@@ -61,5 +62,11 @@ sagemaker_stack = SageMakerNotebookStack(
     security_group_ids=[sg_allow_database_connection_id],
     subnet_id=public_subnet_id,
 )
+
+# Define dependencies
+rds_stack.add_dependency(vpc_stack)
+rds_and_s3_group = DependencyGroup()
+rds_and_s3_group.add(rds_stack)
+rds_and_s3_group.add(s3_stack)
 
 app.synth()
