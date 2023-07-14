@@ -1,4 +1,8 @@
+# Model and data assets directory
 assets/
+
+# AWS Lambda Python Layer
+layer/
 
 *.swp
 package-lock.json
