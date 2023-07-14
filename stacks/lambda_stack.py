@@ -31,7 +31,7 @@ class LambdaStack(NestedStack):
         function = lambda_.Function(
             self, "DataImportLambdaFunction",
             code=lambda_.Code.from_asset(os.path.join(os.curdir, "lambda",)),
-            architecture=lambda_.Architecture.ARM_64,
+            architecture=lambda_.Architecture.X86_64,
             handler="index.handler",
             environment={
                 "DB_SECRET_ARN": db_secret.secret_arn,
