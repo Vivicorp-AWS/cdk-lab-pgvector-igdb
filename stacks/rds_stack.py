@@ -49,12 +49,12 @@ class RDSStack(NestedStack):
             target=self.db
         )
 
-        self.parameter_db_secret_arn = ssm.StringParameter(self, "DBSecretARN", parameter_name=f"/{prefix}/DBSecretARN" ,string_value=self.db.secret.secret_arn)
+        self.parameter_dbsecretarn = ssm.StringParameter(self, "DBSecretARN", parameter_name=f"/{prefix}/DBSecretARN" ,string_value=self.db.secret.secret_arn)
 
         # Outputs
         CfnOutput(self, "DatabaseInstanceIdentifier", value=self.db.instance_identifier,)
         CfnOutput(self, "DatabaseInstanceARN", value=self.db.instance_arn,)
         CfnOutput(self, "DatabaseSecretName", value=self.db.secret.secret_name,)
         CfnOutput(self, "DatabaseSecretARN", value=self.db.secret.secret_arn,)
-        CfnOutput(self, "SSMParameterDBSecretName", value=self.parameter_db_secret_arn.parameter_name,)
-        CfnOutput(self, "SSMParameterDBSecretARN", value=self.parameter_db_secret_arn.parameter_arn,)
+        CfnOutput(self, "SSMParameterDBSecretName", value=self.parameter_dbsecretarn.parameter_name,)
+        CfnOutput(self, "SSMParameterDBSecretARN", value=self.parameter_dbsecretarn.parameter_arn,)
