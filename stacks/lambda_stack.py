@@ -28,7 +28,7 @@ class LambdaStack(Stack):
             removal_policy=RemovalPolicy.DESTROY
             )
 
-        funciton = lambda_.Function(
+        function = lambda_.Function(
             self, "DataImportLambdaFunction",
             code=lambda_.Code.from_asset(os.path.join(os.curdir, "lambda",)),
             architecture=lambda_.Architecture.X86_64,
@@ -38,21 +38,21 @@ class LambdaStack(Stack):
                 "BUCKET_NAME": bucket.bucket_name,
                 },
                 vpc=vpc,
-                vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE),
+                vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
             runtime=lambda_.Runtime.PYTHON_3_10,
             layers=[layer],
             log_retention=logs.RetentionDays.ONE_DAY,
             timeout=Duration.seconds(30),
             )
-        bucket.grant_read(funciton.role)
-        db_secret.grant_read(funciton.role)
+        bucket.grant_read(function.role)
+        db_secret.grant_read(function.role)
         
         triggers.Trigger(
             self, "DataImportLambdaFunctionTrigger",
-            handler=funciton,
+            handler=function,
             invocation_type=triggers.InvocationType.EVENT,  # Async Trigger
             execute_on_handler_change=True,
             )
         
-        CfnOutput(self, "LambdaFunctionName", function.function_name)
-        CfnOutput(self, "LambdaFunctionArn", function.function_arn)
+        CfnOutput(self, "LambdaFunctionName", value=function.function_name)
+        CfnOutput(self, "LambdaFunctionArn", value=function.function_arn)
