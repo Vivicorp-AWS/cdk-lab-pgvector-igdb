@@ -15,7 +15,7 @@ import os
 
 class LambdaStack(NestedStack):
 
-    def __init__(self, scope: Construct, id: str, db_secret, bucket, vpc, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, db_secret, bucket, vpc, security_groups,**kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         layer = lambda_.LayerVersion(
@@ -37,8 +37,9 @@ class LambdaStack(NestedStack):
                 "DB_SECRET_ARN": db_secret.secret_arn,
                 "BUCKET_NAME": bucket.bucket_name,
                 },
-                vpc=vpc,
-                vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
+            vpc=vpc,
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
+            security_groups=[security_groups],
             runtime=lambda_.Runtime.PYTHON_3_10,
             layers=[layer],
             log_retention=logs.RetentionDays.ONE_DAY,

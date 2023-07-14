@@ -72,6 +72,7 @@ lambda_stack = LambdaStack(
     db_secret=db_secret,
     bucket=bucket,
     vpc=vpc,
+    security_groups=[sg_allow_database_connection],
 )
 
 sagemaker_role_stack = SageMakerRoleStack(
