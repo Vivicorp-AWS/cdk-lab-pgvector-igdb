@@ -4,7 +4,6 @@ import os
 import boto3  # type: ignore
 import jsonpickle  # type: ignore
 import json
-import pandas as pd  # type: ignore
 import psycopg  # type: ignore
 from pgvector.psycopg import register_vector  # type: ignore
 
@@ -40,9 +39,10 @@ def handler(event, context):
     s3.download_file(BUCKET_NAME, 'nintendo_switch_games_mean_pooling.json', '/tmp/nintendo_switch_games_mean_pooling.json')
 
     # Import Data Files
+    # [TODO] Try not using Pandas
     logger.info('## Importing Data Files')
-    games_df = pd.read_json("/tmp/nintendo_switch_games.json", orient="values")
-    games_df.columns = ("igdb_id", "name", "summary", "description", "url", "artwork_hash", "screenshot_hash", "description_embeddings")
+    with open('/tmp/nintendo_switch_games_mean_pooling.json') as file:
+        games = json.loads(file.read())
 
     # Import Data into Database
     logger.info('## Importing Data into Database')
@@ -65,11 +65,12 @@ def handler(event, context):
                         description_embeddings vector(384));""")
 
             # Insert data into IGDB table
-            for _, row in games_df.iterrows():
+            for row in games.iterrows():
+                igdb_id, name, summary, description, url, artwork_hash, screenshot_hash, description_embeddings = row
                 cur.execute("""INSERT INTO igdb
                                 (igdb_id, name, summary, description, url, artwork_hash, screenshot_hash, description_embeddings) 
                             VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", 
-                            (row["igdb_id"], row["name"], row["summary"], row["description"], row["url"], row["artwork_hash"], row["screenshot_hash"], row["description_embeddings"], ))
+                            (igdb_id, name, summary, description, url, artwork_hash, screenshot_hash, description_embeddings,))
             
             # # Create L2 distance index
             # cur.execute("""CREATE INDEX ON igdb 
