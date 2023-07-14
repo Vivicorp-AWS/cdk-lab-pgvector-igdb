@@ -4,6 +4,7 @@ from stacks.top_stack import TopStack
 from stacks.vpc_stack import VPCStack
 from stacks.rds_stack import RDSStack
 from stacks.s3_stack import S3Stack
+from stacks.lambda_stack import LambdaStack
 from stacks.iam_stack import IAMStack
 from stacks.sagemaker_stack import SageMakerNotebookStack
 from constructs import DependencyGroup
@@ -44,6 +45,14 @@ s3_stack = S3Stack(
     description="CDK Lab pgvector IGDB S3 Stack",
 )
 bucket = s3_stack.bucket
+bucket_name = bucket.bucket_name
+
+lambda_stack = LambdaStack(
+    top_stack, f"lambda-stack",
+    description="CDK Lab pgvector IGDB Lambda Stack",
+    db_secret_arn=db_secret_arn,
+    bucket=bucket,
+)
 
 # [NOTE] Combine IAMStack into SageMakerStack?
 iam_stack = IAMStack(
