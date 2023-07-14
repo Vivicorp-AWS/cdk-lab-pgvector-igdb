@@ -74,16 +74,6 @@ lambda_stack = LambdaStack(
     vpc=vpc,
 )
 
-# # [NOTE] Combine IAMStack into SageMakerStack?
-# iam_stack = IAMStack(
-#     top_stack, f"iamstack",
-#     description="CDK Lab pgvector IGDB IAM Stack",
-#     db_identifier=db_identifier,
-#     db_secret_arn=db_secret_arn,
-#     parameter_db_secret_arn=parameter_db_secret_arn,
-# )
-# sagemaker_role_arn = iam_stack.sagemaker_role.role_arn
-
 sagemaker_role_stack = SageMakerRoleStack(
     top_stack, f"sagemaker-role-stack",
     description="CDK Lab pgvector IGDB SageMaker Role Stack",
