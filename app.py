@@ -34,15 +34,14 @@ top_stack = TopStack(
     description="CDK Lab pgvector IGDB Top Stack",
 )
 
-# [TODO] Use Stack instead of using NestedStack
 vpc_stack = VPCStack(
     top_stack, f"vpc-stack",
     description="CDK Lab pgvector IGDB VPC Stack",
 )
 vpc = vpc_stack.vpc
 sg_rds = vpc_stack.sg_rds
-sg_allow_database_connection = vpc_stack.sg_allow_database_connection
-sg_allow_database_connection_id = sg_allow_database_connection.security_group_id
+sg_compute_workload = vpc_stack.sg_compute_workload
+sg_compute_workload_id = sg_compute_workload.security_group_id
 public_subnets = vpc_stack.vpc.public_subnets
 public_subnet_id = public_subnets[0].subnet_id
 
@@ -72,7 +71,7 @@ lambda_stack = LambdaStack(
     db_secret=db_secret,
     bucket=bucket,
     vpc=vpc,
-    security_groups=[sg_allow_database_connection],
+    security_groups=[sg_compute_workload],
 )
 
 sagemaker_role_stack = SageMakerRoleStack(
@@ -92,13 +91,17 @@ sagemaker_model_stack = SageMakerModelStack(
     image=IMAGE,
     model_object_key=model_object_key,
 )
+endpoint = sagemaker_model_stack.endpoint
+endpoint_name = endpoint.attr_endpoint_name
 
 sagemaker_notebook_stack = SageMakerNotebookStack(
     top_stack, f"sagemaker-notebook-stack",
     description="CDK Lab pgvector IGDB SageMaker Notebook Stack",
     sagemaker_role_arn=sagemaker_role_arn,
-    security_group_ids=[sg_allow_database_connection_id],
+    security_group_ids=[sg_compute_workload_id],
     subnet_id=public_subnet_id,
+    db_secret_arn=db_secret_arn,
+    endpoint_name=endpoint_name,
 )
 
 # Define dependencies
