@@ -3,7 +3,6 @@ from aws_cdk import (
     aws_iam as iam,
     aws_sagemaker as sagemaker_,
     CfnOutput,
-    CfnTag,
     )
 import sagemaker
 from constructs import Construct
