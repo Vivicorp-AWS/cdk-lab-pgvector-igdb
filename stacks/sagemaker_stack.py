@@ -93,8 +93,8 @@ class SageMakerNotebookStack(NestedStack):
             security_group_ids=security_group_ids,
             subnet_id=subnet_id,
             tags=[
-                CfnTag(key="VAR_DB_SECRET_ARN", value="db_secret_arn"),
-                CfnTag(key="VAR_MODEL_ENDPOINT", value="endpoint_name"),
+                CfnTag(key="VAR_DB_SECRET_ARN", value=db_secret_arn),
+                CfnTag(key="VAR_MODEL_ENDPOINT", value=endpoint_name),
             ],
         )
 
