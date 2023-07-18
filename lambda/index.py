@@ -64,7 +64,7 @@ def handler(event, context):
                         description_embeddings vector(384));""")
 
             # Insert data into IGDB table
-            for row in games.iterrows():
+            for row in games:
                 igdb_id, name, summary, description, url, artwork_hash, screenshot_hash, description_embeddings = row
                 cur.execute("""INSERT INTO igdb
                                 (igdb_id, name, summary, description, url, artwork_hash, screenshot_hash, description_embeddings) 
