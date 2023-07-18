@@ -57,7 +57,7 @@ class SageMakerModelStack(NestedStack):
                 containers=[
                     sagemaker_.CfnModel.ContainerDefinitionProperty(
                         image=image,
-                        model_data_url=model_object_key,  # [TODO] Allow role to access all S3 bucket
+                        model_data_url=model_object_key,
                     )
                 ],
             )
@@ -75,14 +75,14 @@ class SageMakerModelStack(NestedStack):
                 ),
             )
         endpoint_config = sagemaker_.CfnEndpointConfig(
-            self, "DemoEndpointConfig",
+            self, "HuggingFaceInferenceModelEndpointConfig",
             production_variants=[
                 production_variant_property,
                 ],
         )
         endpoint_config_name = endpoint_config.attr_endpoint_config_name        
         endpoint = sagemaker_.CfnEndpoint(
-            self, "DemoEndpoint",
+            self, "HuggingFaceInferenceModelEndpoint",
             endpoint_config_name=endpoint_config_name,
             )
 
