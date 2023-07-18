@@ -3,6 +3,7 @@ from aws_cdk import (
     aws_iam as iam,
     aws_sagemaker as sagemaker_,
     CfnOutput,
+    CfnTag,
     )
 import sagemaker
 from constructs import Construct
@@ -27,24 +28,6 @@ class SageMakerRoleStack(NestedStack):
         bucket.grant_read(self.sagemaker_role)
 
         CfnOutput(self, "SageMakerRoleARN", value=self.sagemaker_role.role_arn)
-
-class SageMakerNotebookStack(NestedStack):
-    def __init__(self, scope: Construct, id: str, sagemaker_role_arn:str, security_group_ids, subnet_id:str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
-
-        # SageMaker Notebook Instance
-        notebook_instance = sagemaker_.CfnNotebookInstance(self, "pgvectorNotebook",
-            instance_type="ml.t3.medium",
-            role_arn=sagemaker_role_arn,
-            default_code_repository="https://github.com/Vivicorp-AWS/cdk-lab-pgvector-igdb.git",
-            direct_internet_access="Enabled",
-            root_access="Enabled",
-            security_group_ids=security_group_ids,
-            subnet_id=subnet_id,
-        )
-
-        CfnOutput(self, "NotebookInstanceARN", value=notebook_instance.ref)  # Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-notebookinstance.html#cfn-sagemaker-notebookinstance-notebookinstancename
-        CfnOutput(self, "NotebookInstanceName", value=notebook_instance.get_att("NotebookInstanceName").to_string())
 
 class SageMakerModelStack(NestedStack):
 
@@ -87,3 +70,21 @@ class SageMakerModelStack(NestedStack):
             )
 
         CfnOutput(self, "EndpointName", value=endpoint.attr_endpoint_name)
+
+class SageMakerNotebookStack(NestedStack):
+    def __init__(self, scope: Construct, id: str, sagemaker_role_arn:str, security_group_ids, subnet_id:str, **kwargs) -> None:
+        super().__init__(scope, id, **kwargs)
+
+        # SageMaker Notebook Instance
+        notebook_instance = sagemaker_.CfnNotebookInstance(self, "pgvectorNotebook",
+            instance_type="ml.t3.medium",
+            role_arn=sagemaker_role_arn,
+            default_code_repository="https://github.com/Vivicorp-AWS/cdk-lab-pgvector-igdb.git",
+            direct_internet_access="Enabled",
+            root_access="Enabled",
+            security_group_ids=security_group_ids,
+            subnet_id=subnet_id,
+        )
+
+        CfnOutput(self, "NotebookInstanceARN", value=notebook_instance.ref)  # Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-notebookinstance.html#cfn-sagemaker-notebookinstance-notebookinstancename
+        CfnOutput(self, "NotebookInstanceName", value=notebook_instance.get_att("NotebookInstanceName").to_string())
