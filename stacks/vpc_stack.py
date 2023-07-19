@@ -30,9 +30,9 @@ class VPCStack(NestedStack):
                 ],
             )
         
-        # Security group for SageMaker Notebook
-        self.sg_allow_database_connection = ec2.SecurityGroup(
-            self, "SageMakerNotebookSecurityGroup",
+        # Security group for computing workloads like SageMaker Notebook and Lambda Funciton
+        self.sg_compute_workload = ec2.SecurityGroup(
+            self, "AllowDatabaseConnectionSecurityGroup",
             vpc=self.vpc,
             allow_all_outbound=True,
         )
@@ -43,6 +43,29 @@ class VPCStack(NestedStack):
             vpc=self.vpc,
             allow_all_outbound=True,
         )
-        self.sg_rds.add_ingress_rule(self.sg_allow_database_connection, ec2.Port.tcp(5432))            
+        self.sg_rds.add_ingress_rule(self.sg_compute_workload, ec2.Port.tcp(5432))
+
+        # Security group for VPC Endpoints
+        self.sg_vpce = ec2.SecurityGroup(
+            self, "VPCESecurityGroup",
+            vpc=self.vpc,
+            allow_all_outbound=True,
+        )
+        self.sg_vpce.add_ingress_rule(self.sg_compute_workload, ec2.Port.all_tcp())
+
+        # Interface VPC Endpoint for Lambda Function to access SecretsManager
+        self.vpc.add_interface_endpoint(
+            "SecretsManagerInterfaceVPCEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
+            security_groups=[self.sg_vpce],
+        )
+
+        # Gateway VPC Endpoint for Lambda Function to access S3
+        self.vpc.add_gateway_endpoint(
+            "S3GatewayVPCEndpoint",
+            service=ec2.GatewayVpcEndpointAwsService.S3,
+            subnets=[ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED)],
+        )
 
         CfnOutput(self, "VPCARN", value=self.vpc.vpc_arn)
