@@ -100,6 +100,7 @@ sagemaker_notebook_stack = SageMakerNotebookStack(
     sagemaker_role_arn=sagemaker_role_arn,
     security_group_ids=[sg_compute_workload_id],
     subnet_id=public_subnet_id,
+    bucket_name=bucket_name,
     db_secret_arn=db_secret_arn,
     endpoint_name=endpoint_name,
 )

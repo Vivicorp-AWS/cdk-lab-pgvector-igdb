@@ -78,6 +78,7 @@ class SageMakerNotebookStack(NestedStack):
             sagemaker_role_arn:str,
             security_group_ids,
             subnet_id:str,
+            bucket_name:str,
             db_secret_arn:str,
             endpoint_name:str,
             **kwargs) -> None:
@@ -93,6 +94,7 @@ class SageMakerNotebookStack(NestedStack):
             security_group_ids=security_group_ids,
             subnet_id=subnet_id,
             tags=[
+                CfnTag(key="VAR_ASSETS_BUCKET", value=bucket_name),
                 CfnTag(key="VAR_DB_SECRET_ARN", value=db_secret_arn),
                 CfnTag(key="VAR_MODEL_ENDPOINT", value=endpoint_name),
             ],
