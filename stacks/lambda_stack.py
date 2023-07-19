@@ -12,12 +12,18 @@ from aws_cdk import (
 )
 from constructs import Construct
 import os
+import platform
 
 class LambdaStack(NestedStack):
 
     def __init__(self, scope: Construct, id: str, db_secret, bucket, vpc, security_groups,**kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
+        # [NOTE] pgvector-python has Numpy as dependency.
+        # Refer to https://stackoverflow.com/a/76553058/2975670,
+        # and visit Numpy's download page at PyPI (https://pypi.org/project/numpy/#files),
+        # we found that the only platform that we can download is "manylinux_2_17_x86_64",
+        # so download with "pip install --target ./layer/python --platform manylinux_2_17_x86_64 --only-binary=:all: --no-cache-dir -r requirements-layer.txt"
         layer = lambda_.LayerVersion(
             self, 'LambdaLayer',
             description='Python layer for send-task-lambda-function"',
@@ -27,6 +33,8 @@ class LambdaStack(NestedStack):
                 lambda_.Runtime.PYTHON_3_10],
             removal_policy=RemovalPolicy.DESTROY
             )
+        
+        # architecture = lambda_.Architecture.ARM_64 if platform.machine() == 'arm64' else lambda_.Architecture.X86_64
 
         function = lambda_.Function(
             self, "DataImportLambdaFunction",
@@ -39,11 +47,11 @@ class LambdaStack(NestedStack):
                 },
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_ISOLATED),
-            security_groups=[security_groups],
+            security_groups=security_groups,
             runtime=lambda_.Runtime.PYTHON_3_10,
             layers=[layer],
             log_retention=logs.RetentionDays.ONE_DAY,
-            timeout=Duration.seconds(30),
+            timeout=Duration.seconds(60),
             )
 
         bucket.grant_read(function.role)
