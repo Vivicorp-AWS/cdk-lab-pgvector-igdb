@@ -13,7 +13,7 @@ This project refers to a [solution delivered by AWS: "Building AI-powered search
 * Change the model endpoint to a Serverless one to lower the inferencing cost
 * Add a little inference application built with [Gradio](https://www.gradio.app)
 
-<!-- TODO: Architeture Chart -->
+![](./diagram.jpg)
 
 - [Components to be deployed](#components-to-be-deployed)
 - [File Structure](#file-structure)
