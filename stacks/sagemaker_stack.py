@@ -8,7 +8,7 @@ from aws_cdk import (
 from constructs import Construct
 
 class SageMakerRoleStack(NestedStack):
-    def __init__(self, scope: Construct, id: str, db_secret, parameter_dbsecretarn, bucket, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, db_secret, bucket, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         # SageMaker Execution Role
@@ -21,8 +21,6 @@ class SageMakerRoleStack(NestedStack):
         self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess"))
         # Grant SageMaker Execution Role read/write access to Database Secret
         db_secret.grant_read(self.sagemaker_role)
-        # Grant SageMaker Execution Role read access to Parameter Store secret
-        parameter_dbsecretarn.grant_read(self.sagemaker_role)
         # Grant SageMaker Execution Role read access to S3 Bucket
         bucket.grant_read(self.sagemaker_role)
 
@@ -93,7 +91,7 @@ class SageMakerNotebookStack(NestedStack):
             root_access="Enabled",
             security_group_ids=security_group_ids,
             subnet_id=subnet_id,
-            tags=[
+            tags=[  # Use tags to inject some necessary variables
                 CfnTag(key="VAR_ASSETS_BUCKET", value=bucket_name),
                 CfnTag(key="VAR_DB_SECRET_ARN", value=db_secret_arn),
                 CfnTag(key="VAR_MODEL_ENDPOINT", value=endpoint_name),

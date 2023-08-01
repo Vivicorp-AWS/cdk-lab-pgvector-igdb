@@ -56,7 +56,6 @@ rds_stack = RDSStack(
 db_secret = rds_stack.db.secret
 db_secret_arn = db_secret.secret_arn
 db_identifier = rds_stack.db.instance_identifier
-parameter_dbsecretarn = rds_stack.parameter_dbsecretarn
 
 s3_stack = S3Stack(
     top_stack, f"s3-stack",
@@ -79,7 +78,6 @@ sagemaker_role_stack = SageMakerRoleStack(
     top_stack, f"sagemaker-role-stack",
     description="CDK Lab pgvector IGDB SageMaker Role Stack",
     db_secret=db_secret,
-    parameter_dbsecretarn=parameter_dbsecretarn,
     bucket=bucket,
 )
 sagemaker_role = sagemaker_role_stack.sagemaker_role
