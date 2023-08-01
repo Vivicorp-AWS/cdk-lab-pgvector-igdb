@@ -16,7 +16,6 @@ class SageMakerRoleStack(NestedStack):
             assumed_by=iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="SageMaker Execution Role",
         )
-
         # Add "AmazonSageMakerFullAccess" and "SecretsManagerReadWrite" managed policies to SageMaker Execution Role
         self.sagemaker_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess"))
         # Grant SageMaker Execution Role read/write access to Database Secret
@@ -31,6 +30,7 @@ class SageMakerModelStack(NestedStack):
     def __init__(self, scope: Construct, id: str, sagemaker_role_arn:str, image:str, model_object_key:str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
         
+        # Create a model
         model = sagemaker.CfnModel(
             self, "HuggingFaceInferenceModel",
                 execution_role_arn=sagemaker_role_arn,
@@ -43,6 +43,7 @@ class SageMakerModelStack(NestedStack):
             )
         model_name = model.attr_model_name
 
+        # Create a Serverless endpoint
         # [NOTE] When setting config, it is recommended to read the SageMaker Python package's reference and apply the default values
         production_variant_property = sagemaker.CfnEndpointConfig.ProductionVariantProperty(
             model_name=model_name,
