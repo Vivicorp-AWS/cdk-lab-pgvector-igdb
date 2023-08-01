@@ -38,12 +38,12 @@ def handler(event, context):
     logger.info('## Downloading Data Files')
     s3.download_file(BUCKET_NAME, 'nintendo_switch_games_mean_pooling.json', '/tmp/nintendo_switch_games_mean_pooling.json')
 
-    # Import Data Files
+    # Load JSON Data into Dict
     logger.info('## Importing Data Files')
     with open('/tmp/nintendo_switch_games_mean_pooling.json') as file:
         games = json.loads(file.read())
 
-    # Import Data into Database
+    # Import Dict Data into Database
     logger.info('## Importing Data into Database')
     with psycopg.connect(host=db_host, user=db_user, password=db_pass, port=db_port, connect_timeout=10, autocommit=True) as conn:
         with conn.cursor() as cur:
