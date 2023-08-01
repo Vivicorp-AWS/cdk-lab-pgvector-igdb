@@ -15,11 +15,11 @@ import sagemaker
 
 app = cdk.App()
 
+# Set static variables for the app
 ACCOUNT = app.node.try_get_context("account")
 REGION = app.node.try_get_context("region")
 PREFIX = app.node.try_get_context("prefix")
-
-IMAGE = sagemaker.image_uris.retrieve(
+IMAGE = sagemaker.image_uris.retrieve(  # Use the SageMaker module to retrieve the image URI
             framework='huggingface',
             region=REGION,
             version='4.26.0',
@@ -29,6 +29,7 @@ IMAGE = sagemaker.image_uris.retrieve(
                                              # So for example, if you want to use GPU, you should fill in a instance type that is supported by GPU such as "ml.p3.8xlarge"
             )
 
+# Create stacks
 top_stack = TopStack(
     app, f"{PREFIX}-pgvector-igdb-stack",
     description="CDK Lab pgvector IGDB Top Stack",
