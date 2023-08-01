@@ -16,7 +16,6 @@ import sagemaker
 app = cdk.App()
 
 # Set static variables for the app
-ACCOUNT = app.node.try_get_context("account")
 REGION = app.node.try_get_context("region")
 PREFIX = app.node.try_get_context("prefix")
 IMAGE = sagemaker.image_uris.retrieve(  # Use the SageMaker module to retrieve the image URI
