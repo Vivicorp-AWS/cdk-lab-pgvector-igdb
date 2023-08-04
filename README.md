@@ -33,7 +33,7 @@ This project refers to a [solution delivered by AWS: "Building AI-powered search
 
 * A **VPC** with 2 Available Zone, and each az contains 2 subnets (1 public and 1 private)
 * A **RDS for PostgreSQL database instance** which is compitable for pgvector extension
-* A **Lambda function** that can import database automatically after the database is initialized compleleted
+* A **Lambda function** that can import example dataset into database automatically after the database is initialized compleleted
 * A **Serverless SageMaker Model Endpoint** with the "[all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)" pre-trained SentenceTransformers model, which is balanced in performance and speed
 * A **SageMaker Notebook instance** to make inference or interact with the model endpoint
 
