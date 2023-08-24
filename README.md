@@ -101,9 +101,9 @@ Execute the script at the root directory of this project:
 ./scripts/get_assets.sh
 ```
 
-This script will download
+This script will do the following steps
 
-1. [The "all-MiniLM-L6-v2" pre-trained SentenceTransformers model artifact from HuggingFace](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+1. Download [The "all-MiniLM-L6-v2" pre-trained SentenceTransformers model artifact from HuggingFace](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), and pack with the [Inference Code](https://github.com/huggingface/notebooks/blob/main/sagemaker/17_custom_inference_script/sagemaker-notebook.ipynb) (Made with [SageMaker Hugging Face Inference Toolkit](https://github.com/aws/sagemaker-huggingface-inference-toolkit))
 2. [Example IGDB Dataset](https://github.com/VioletVivirand/igdb-data-examples)
 
 All of them are saved in `./assets` directory.
