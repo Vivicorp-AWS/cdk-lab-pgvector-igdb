@@ -10,10 +10,10 @@ def mean_pooling(model_output, attention_mask):
 
 
 def model_fn(model_dir):
-  # Load model from HuggingFace Hub
-  tokenizer = AutoTokenizer.from_pretrained(model_dir)
-  model = AutoModel.from_pretrained(model_dir)
-  return model, tokenizer
+    # Load model from HuggingFace Hub
+    tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    model = AutoModel.from_pretrained(model_dir)
+    return model, tokenizer
 
 def predict_fn(data, model_and_tokenizer):
     # destruct model and tokenizer
