@@ -1,5 +1,7 @@
 # CDK Lab - AI-powered Search Solution with PostgreSQL & pgvector<!-- omit from toc -->
 
+![](.screenshot.jpg)
+
 When we talk about NLP techniques and Large Language Models (LLM), a common way to build a search engine application is transforming the text data into vector embeddings, then calculate the similarity between the embeddings. 
 
 Dedicated vector database like [Pinecone](https://www.pinecone.io) and [Faiss](https://github.com/facebookresearch/faiss) are good choices for storing and making search, but we still want to use regular relational databases because they are more common to be used. With [pgvector](https://github.com/pgvector/pgvector), this extension gives PostgreSQL the power to easily store vector data and make search with them.
