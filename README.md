@@ -1,6 +1,6 @@
 # CDK Lab - AI-powered Search Solution with PostgreSQL & pgvector<!-- omit from toc -->
 
-![](.screenshot.jpg)
+![](./screenshot.jpg)
 
 When we talk about NLP techniques and Large Language Models (LLM), a common way to build a search engine application is transforming the text data into vector embeddings, then calculate the similarity between the embeddings. 
 
